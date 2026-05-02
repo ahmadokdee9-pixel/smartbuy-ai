@@ -2,160 +2,133 @@
 
 import { useState } from "react";
 
-type ProductResult = {
-  store: string;
-  price: number;
-  link?: string;
-};
-
 export default function Home() {
   const [product, setProduct] = useState("");
-  const [results, setResults] = useState<ProductResult[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [results, setResults] = useState<any[]>([]);
+  const [analysis, setAnalysis] = useState<any>(null);
 
-  async function searchPrices() {
-    setLoading(true);
+  const handleSearch = async () => {
+    if (!product) return;
 
-    try {
-      const res = await fetch(`/api/search?q=${encodeURIComponent(product)}`);
-      const data = await res.json();
-      setResults(data);
-    } catch (error) {
-      console.error(error);
-      setResults([]);
+    const res = await fetch(`/api/search?q=${product}`);
+    const data = await res.json();
+
+    setResults(data);
+
+    // 🧠 AI ANALYSIS
+    if (data.length > 0) {
+      const cheapest = data.reduce((a: any, b: any) =>
+        a.price < b.price ? a : b
+      );
+
+      const highest = data.reduce((a: any, b: any) =>
+        a.price > b.price ? a : b
+      );
+
+      const average =
+        data.reduce((sum: number, item: any) => sum + item.price, 0) /
+        data.length;
+
+      const diff = average - cheapest.price;
+
+      let decision = "";
+      let score = 0;
+      let aiText = "";
+
+      if (diff > 50) {
+        decision = "🔥 Best Deal";
+        score = 90;
+        aiText = `This is a strong deal for ${product}. Prices are significantly below market average. Buying now is highly recommended.`;
+      } else if (diff > 20) {
+        decision = "👍 Good Deal";
+        score = 75;
+        aiText = `This is a good price for ${product}, but not the lowest ever. Still worth buying.`;
+      } else if (diff > 0) {
+        decision = "⚠️ Average Price";
+        score = 50;
+        aiText = `The price is average. You may find better deals later. Consider waiting.`;
+      } else {
+        decision = "❌ Bad Deal";
+        score = 30;
+        aiText = `This price is higher than normal. It is better to wait before buying ${product}.`;
+      }
+
+      setAnalysis({
+        cheapest,
+        highest,
+        average,
+        decision,
+        score,
+        aiText,
+      });
     }
-
-    setLoading(false);
-  }
-
-  const cheapest =
-    results.length > 0
-      ? results.reduce((min, item) => (item.price < min.price ? item : min))
-      : null;
-
-  const highest =
-    results.length > 0
-      ? results.reduce((max, item) => (item.price > max.price ? item : max))
-      : null;
-
-  const saving = cheapest && highest ? highest.price - cheapest.price : 0;
+  };
 
   return (
-    <main style={{ maxWidth: 700, margin: "60px auto", fontFamily: "Arial", padding: 20 }}>
-      <h1 style={{ textAlign: "center" }}>Smart Buy AI</h1>
-      <p style={{ textAlign: "center" }}>Find the best price and the best place to buy.</p>
+    <main className="flex flex-col items-center justify-center p-10 gap-6">
+      <h1 className="text-3xl font-bold">Smart Buy AI</h1>
+      <p>Find the best price and the best place to buy.</p>
 
       <input
-        type="text"
-        placeholder="Example: jacket"
+        className="border p-2 w-80"
+        placeholder="Example: iPhone 13"
         value={product}
         onChange={(e) => setProduct(e.target.value)}
-        style={{
-          width: "100%",
-          padding: 14,
-          marginTop: 20,
-          fontSize: 16,
-          borderRadius: 8,
-          border: "1px solid #ccc",
-        }}
       />
 
       <button
-        onClick={searchPrices}
-        disabled={!product || loading}
-        style={{
-          width: "100%",
-          padding: 14,
-          marginTop: 15,
-          fontSize: 18,
-          borderRadius: 8,
-          cursor: "pointer",
-        }}
+        onClick={handleSearch}
+        className="bg-black text-white px-4 py-2"
       >
-        {loading ? "Searching..." : "Find Best Price"}
+        Find Best Price
       </button>
 
-      {cheapest && (
-        <div
-          style={{
-            marginTop: 25,
-            padding: 20,
-            border: "2px solid green",
-            borderRadius: 12,
-            background: "#f0fff4",
-          }}
-        >
-          <h2>Best Price Now</h2>
-          <p>
-            <strong>{cheapest.store}</strong>: €{cheapest.price}
-          </p>
-          <p>🔥 This looks like a good deal.</p>
-          <p>
-            <strong>You can save €{saving}</strong>
+      {/* 🧠 AI RESULT */}
+      {analysis && (
+        <div className="border p-4 w-96 bg-green-50 rounded-lg">
+          <h2 className="font-bold text-lg">Best Price Now</h2>
+
+          <p className="font-semibold">
+            {analysis.cheapest.store}: €{analysis.cheapest.price}
           </p>
 
-          {cheapest.link && (
-            <a
-              href={cheapest.link}
-              target="_blank"
-              style={{
-                display: "inline-block",
-                marginTop: 10,
-                padding: "10px 14px",
-                background: "green",
-                color: "white",
-                borderRadius: 6,
-                textDecoration: "none",
-              }}
-            >
-              Buy Best Deal
-            </a>
-          )}
+          <p className="text-green-700">{analysis.decision}</p>
 
-          <hr />
-
-          <h3>Smart Buy AI Recommendation</h3>
           <p>
-            Smart Buy AI recommends buying from {cheapest.store}. It is the cheapest option at €
-            {cheapest.price}, and you can save €{saving} compared to the highest price.
+            You can save €
+            {analysis.highest.price - analysis.cheapest.price}
           </p>
+
+          <a
+            href={analysis.cheapest.link}
+            target="_blank"
+            className="bg-green-600 text-white px-3 py-1 mt-2 inline-block rounded"
+          >
+            Buy Best Deal
+          </a>
+
+          <hr className="my-2" />
+
+          <p className="text-sm">{analysis.aiText}</p>
         </div>
       )}
 
-      <div style={{ marginTop: 25 }}>
-        {results.map((item, index) => (
-          <div
-            key={index}
-            style={{
-              padding: 15,
-              marginBottom: 10,
-              border: "1px solid #ddd",
-              borderRadius: 8,
-            }}
-          >
-            <strong>{item.store}</strong>: €{item.price}
+      {/* 🛒 ALL RESULTS */}
+      {results.map((item, i) => (
+        <div key={i} className="border p-4 w-96 rounded">
+          <p className="font-semibold">
+            {item.store}: €{item.price}
+          </p>
 
-            {item.link && (
-              <div style={{ marginTop: 10 }}>
-                <a
-                  href={item.link}
-                  target="_blank"
-                  style={{
-                    display: "inline-block",
-                    padding: "8px 12px",
-                    background: "#0070f3",
-                    color: "#fff",
-                    borderRadius: 6,
-                    textDecoration: "none",
-                  }}
-                >
-                  Buy Now
-                </a>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+          <a
+            href={item.link}
+            target="_blank"
+            className="bg-blue-600 text-white px-3 py-1 mt-2 inline-block rounded"
+          >
+            Buy Now
+          </a>
+        </div>
+      ))}
     </main>
   );
 }
