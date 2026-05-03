@@ -93,10 +93,14 @@ export default function Home() {
   ];
 
   function getDealScore(item: Product) {
-    const discount = ((item.oldPrice - item.price) / item.oldPrice) * 100;
+    const discountPercent = ((item.oldPrice - item.price) / item.oldPrice) * 100;
     const ratingScore = item.rating * 10;
-    const finalScore = Math.round(discount * 2 + ratingScore);
+    const finalScore = Math.round(discountPercent * 2 + ratingScore);
     return Math.min(finalScore, 100);
+  }
+
+  function getDiscountPercent(item: Product) {
+    return Math.round(((item.oldPrice - item.price) / item.oldPrice) * 100);
   }
 
   function getDecision(score: number) {
@@ -108,10 +112,10 @@ export default function Home() {
 
   function getAiAnalysis(item: Product) {
     const score = getDealScore(item);
-    const discount = item.oldPrice - item.price;
+    const saving = item.oldPrice - item.price;
 
     if (score >= 85) {
-      return `This is a strong deal. The price is €${discount} lower than the usual price, the rating is good, and buying now is recommended.`;
+      return `This is a strong deal. The price is €${saving} lower than usual, rating is good, and buying now is recommended.`;
     }
 
     if (score >= 65) {
@@ -119,7 +123,7 @@ export default function Home() {
     }
 
     if (score >= 45) {
-      return `The price is average. Smart Buy AI recommends waiting a few days before buying unless you need it urgently.`;
+      return `The price is average. Smart Buy AI recommends waiting a few days unless you need it urgently.`;
     }
 
     return `This deal is not attractive right now. The discount is weak compared to the usual price. Waiting is recommended.`;
@@ -134,7 +138,7 @@ export default function Home() {
     return "Best time: Wait for a discount";
   }
 
-  const search = () => {
+  function search() {
     let filtered = products;
 
     if (query.trim() !== "") {
@@ -147,27 +151,35 @@ export default function Home() {
       filtered = filtered.filter((item) => item.category === category);
     }
 
-    filtered = filtered.sort((a, b) => {
-      const scoreA = getDealScore(a);
-      const scoreB = getDealScore(b);
-      return scoreB - scoreA;
-    });
+    filtered = filtered.sort((a, b) => getDealScore(b) - getDealScore(a));
 
     setResults(filtered);
     setBest(filtered[0] || null);
-  };
+  }
+
+  function quickSearch(productName: string) {
+    setQuery(productName);
+
+    const filtered = products
+      .filter((item) => item.name.toLowerCase().includes(productName.toLowerCase()))
+      .sort((a, b) => getDealScore(b) - getDealScore(a));
+
+    setResults(filtered);
+    setBest(filtered[0] || null);
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 p-6">
-      <section className="max-w-3xl mx-auto text-center">
-        <h1 className="text-4xl font-bold mb-2">Smart Buy AI</h1>
+      <section className="max-w-4xl mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold mb-2">Smart Buy AI</h1>
+          <p className="text-gray-600">
+            AI shopping assistant that helps you decide what to buy, where to buy,
+            and when to buy.
+          </p>
+        </div>
 
-        <p className="text-gray-600 mb-6">
-          AI shopping assistant that helps you decide what to buy, where to buy,
-          and when to buy.
-        </p>
-
-        <div className="bg-white p-5 rounded-xl shadow mb-6">
+        <div className="bg-white p-5 rounded-xl shadow mb-6 text-center">
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -181,9 +193,7 @@ export default function Home() {
                 key={cat}
                 onClick={() => setCategory(cat)}
                 className={`px-4 py-2 rounded ${
-                  category === cat
-                    ? "bg-black text-white"
-                    : "bg-gray-200 text-black"
+                  category === cat ? "bg-black text-white" : "bg-gray-200 text-black"
                 }`}
               >
                 {cat}
@@ -199,8 +209,24 @@ export default function Home() {
           </button>
         </div>
 
+        <div className="bg-white p-5 rounded-xl shadow mb-6">
+          <h2 className="text-xl font-bold mb-3">🔥 Trending Now</h2>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {["iphone 13", "iphone 15", "jacket", "sofa"].map((item) => (
+              <button
+                key={item}
+                onClick={() => quickSearch(item)}
+                className="border p-3 rounded hover:bg-gray-100"
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {best && (
-          <div className="bg-green-50 border border-green-500 p-5 rounded-xl mb-6 text-left">
+          <div className="bg-green-50 border border-green-500 p-5 rounded-xl mb-6">
             <h2 className="text-2xl font-bold mb-2">🏆 Best AI Pick</h2>
 
             <p className="font-bold text-lg">
@@ -217,6 +243,16 @@ export default function Home() {
               Save: <strong>€{best.oldPrice - best.price}</strong>
             </p>
 
+            <div className="mt-3">
+              <div className="bg-gray-200 h-2 rounded">
+                <div
+                  className="bg-green-500 h-2 rounded"
+                  style={{ width: `${getDiscountPercent(best)}%` }}
+                ></div>
+              </div>
+              <p className="text-sm mt-1">Discount: {getDiscountPercent(best)}%</p>
+            </div>
+
             <p className="mt-2">
               Rating: <strong>{best.rating}/5 ⭐</strong>
             </p>
@@ -227,13 +263,19 @@ export default function Home() {
 
             <p className="mt-2 font-bold">{getDecision(getDealScore(best))}</p>
 
-            <p className="mt-2 text-gray-700">{getAiAnalysis(best)}</p>
+            <div className="mt-4 bg-yellow-100 p-3 rounded">
+              <p className="font-semibold">📊 AI Alert</p>
+              <p className="text-sm">
+                Prices for this product may drop during sales events. Smart Buy AI
+                recommends checking again before major shopping days.
+              </p>
+            </div>
+
+            <p className="mt-4 text-gray-700">{getAiAnalysis(best)}</p>
 
             <p className="mt-2 font-semibold">{getBestTimeToBuy(best)}</p>
 
-            <p className="mt-2 text-sm text-gray-600">
-              Delivery: {best.delivery}
-            </p>
+            <p className="mt-2 text-sm text-gray-600">Delivery: {best.delivery}</p>
 
             <a
               href={best.link}
@@ -246,14 +288,11 @@ export default function Home() {
         )}
 
         {results.length > 0 && (
-          <h2 className="text-xl font-bold mb-4">All Results</h2>
+          <h2 className="text-xl font-bold mb-4 text-center">All Results</h2>
         )}
 
         {results.map((item, i) => (
-          <div
-            key={i}
-            className="bg-white border p-4 mb-4 rounded-xl shadow text-left"
-          >
+          <div key={i} className="bg-white border p-4 mb-4 rounded-xl shadow">
             <div className="flex justify-between items-center">
               <div>
                 <p className="font-bold text-lg">{item.store}</p>
@@ -262,9 +301,7 @@ export default function Home() {
 
               <div className="text-right">
                 <p className="text-xl font-bold">€{item.price}</p>
-                <p className="text-sm text-gray-400 line-through">
-                  €{item.oldPrice}
-                </p>
+                <p className="text-sm text-gray-400 line-through">€{item.oldPrice}</p>
               </div>
             </div>
 
@@ -272,6 +309,7 @@ export default function Home() {
               <p>⭐ Rating: {item.rating}/5</p>
               <p>📦 Delivery: {item.delivery}</p>
               <p>🧠 AI Score: {getDealScore(item)}/100</p>
+              <p>💰 Discount: {getDiscountPercent(item)}%</p>
               <p className="font-semibold">{getDecision(getDealScore(item))}</p>
             </div>
 
@@ -286,7 +324,7 @@ export default function Home() {
         ))}
 
         {results.length === 0 && (
-          <p className="text-gray-500 mt-6">
+          <p className="text-gray-500 mt-6 text-center">
             Search for a product to see AI recommendations.
           </p>
         )}
