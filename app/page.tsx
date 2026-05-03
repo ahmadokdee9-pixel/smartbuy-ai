@@ -35,59 +35,30 @@ export default function Home() {
   ]);
 
   const products: Product[] = [
-    // Electronics
     { name: "iphone 13", store: "Amazon", price: 489, oldPrice: 549, rating: 4.5, link: "https://www.amazon.nl/s?k=iphone+13", category: "Electronics", delivery: "Fast delivery" },
     { name: "iphone 13", store: "Bol.com", price: 509, oldPrice: 569, rating: 4.4, link: "https://www.bol.com/nl/nl/s/?searchtext=iphone+13", category: "Electronics", delivery: "1-2 days" },
     { name: "iphone 15", store: "Amazon", price: 779, oldPrice: 849, rating: 4.7, link: "https://www.amazon.nl/s?k=iphone+15", category: "Electronics", delivery: "Fast delivery" },
     { name: "samsung galaxy s24", store: "MediaMarkt", price: 699, oldPrice: 799, rating: 4.6, link: "https://www.mediamarkt.nl/nl/search.html?query=samsung%20galaxy%20s24", category: "Electronics", delivery: "Store pickup" },
     { name: "macbook air", store: "Amazon", price: 999, oldPrice: 1199, rating: 4.8, link: "https://www.amazon.nl/s?k=macbook+air", category: "Electronics", delivery: "Fast delivery" },
     { name: "airpods pro", store: "Bol.com", price: 229, oldPrice: 279, rating: 4.6, link: "https://www.bol.com/nl/nl/s/?searchtext=airpods+pro", category: "Electronics", delivery: "1-2 days" },
-
-    // Fashion
     { name: "jacket", store: "Zara", price: 70, oldPrice: 99, rating: 4.2, link: "https://www.zara.com/nl/en/search?searchTerm=jacket", category: "Fashion", delivery: "2-3 days" },
     { name: "jacket", store: "H&M", price: 65, oldPrice: 89, rating: 4.1, link: "https://www2.hm.com/nl_nl/search-results.html?q=jacket", category: "Fashion", delivery: "2-4 days" },
     { name: "shoes", store: "Nike", price: 95, oldPrice: 129, rating: 4.4, link: "https://www.nike.com/nl/search?q=shoes", category: "Fashion", delivery: "2-3 days" },
     { name: "hoodie", store: "Zalando", price: 49, oldPrice: 79, rating: 4.3, link: "https://www.zalando.nl/catalogus/?q=hoodie", category: "Fashion", delivery: "2-4 days" },
-
-    // Home
     { name: "sofa", store: "IKEA", price: 299, oldPrice: 349, rating: 4.3, link: "https://www.ikea.com/nl/en/search/?q=sofa", category: "Home", delivery: "Home delivery" },
     { name: "desk", store: "IKEA", price: 89, oldPrice: 119, rating: 4.2, link: "https://www.ikea.com/nl/en/search/?q=desk", category: "Home", delivery: "Home delivery" },
     { name: "chair", store: "Bol.com", price: 75, oldPrice: 110, rating: 4.1, link: "https://www.bol.com/nl/nl/s/?searchtext=chair", category: "Home", delivery: "1-2 days" },
     { name: "lamp", store: "IKEA", price: 35, oldPrice: 49, rating: 4.0, link: "https://www.ikea.com/nl/en/search/?q=lamp", category: "Home", delivery: "Home delivery" },
-
-    // Beauty
     { name: "perfume", store: "Douglas", price: 59, oldPrice: 89, rating: 4.5, link: "https://www.douglas.nl/nl/search?q=perfume", category: "Beauty", delivery: "2-3 days" },
     { name: "skincare", store: "Bol.com", price: 29, oldPrice: 45, rating: 4.2, link: "https://www.bol.com/nl/nl/s/?searchtext=skincare", category: "Beauty", delivery: "1-2 days" },
-
-    // Sports
     { name: "fitness watch", store: "Amazon", price: 129, oldPrice: 179, rating: 4.4, link: "https://www.amazon.nl/s?k=fitness+watch", category: "Sports", delivery: "Fast delivery" },
     { name: "football shoes", store: "Nike", price: 89, oldPrice: 130, rating: 4.3, link: "https://www.nike.com/nl/search?q=football+shoes", category: "Sports", delivery: "2-3 days" },
-
-    // Gaming
     { name: "playstation 5", store: "MediaMarkt", price: 449, oldPrice: 549, rating: 4.8, link: "https://www.mediamarkt.nl/nl/search.html?query=playstation%205", category: "Gaming", delivery: "Store pickup" },
     { name: "gaming headset", store: "Amazon", price: 69, oldPrice: 99, rating: 4.4, link: "https://www.amazon.nl/s?k=gaming+headset", category: "Gaming", delivery: "Fast delivery" },
   ];
 
-  const categories = [
-    "All",
-    "Electronics",
-    "Fashion",
-    "Home",
-    "Beauty",
-    "Sports",
-    "Gaming",
-  ];
-
-  const trending = [
-    "iphone 15",
-    "macbook air",
-    "airpods pro",
-    "jacket",
-    "playstation 5",
-    "sofa",
-    "perfume",
-    "gaming headset",
-  ];
+  const categories = ["All", "Electronics", "Fashion", "Home", "Beauty", "Sports", "Gaming"];
+  const trending = ["iphone 15", "macbook air", "airpods pro", "jacket", "playstation 5", "sofa", "perfume", "gaming headset"];
 
   function getDealScore(item: Product) {
     const discount = ((item.oldPrice - item.price) / item.oldPrice) * 100;
@@ -123,18 +94,9 @@ export default function Home() {
     const score = getDealScore(item);
     const saving = item.oldPrice - item.price;
 
-    if (score >= 85) {
-      return `Strong buy signal. You save €${saving}, the rating is high, and this deal looks close to a premium buying opportunity.`;
-    }
-
-    if (score >= 65) {
-      return `Good value. This is a reasonable deal now, but Smart Buy AI still sees a chance for a slightly better price.`;
-    }
-
-    if (score >= 45) {
-      return `Average price zone. Waiting a few days may be better unless you need this product urgently.`;
-    }
-
+    if (score >= 85) return `Strong buy signal. You save €${saving}, the rating is high, and this deal looks close to a premium buying opportunity.`;
+    if (score >= 65) return `Good value. This is a reasonable deal now, but Smart Buy AI still sees a chance for a slightly better price.`;
+    if (score >= 45) return `Average price zone. Waiting a few days may be better unless you need this product urgently.`;
     return `Weak deal signal. The discount is not attractive compared with the usual price. Waiting is recommended.`;
   }
 
@@ -168,9 +130,7 @@ export default function Home() {
 
     setTimeout(() => {
       const filtered = products
-        .filter((item) =>
-          item.name.toLowerCase().includes(productName.toLowerCase())
-        )
+        .filter((item) => item.name.toLowerCase().includes(productName.toLowerCase()))
         .sort((a, b) => getDealScore(b) - getDealScore(a));
 
       setResults(filtered);
@@ -180,36 +140,25 @@ export default function Home() {
   }
 
   function saveProduct(item: Product) {
-    const exists = wishlist.some(
-      (p) => p.name === item.name && p.store === item.store
-    );
-
+    const exists = wishlist.some((p) => p.name === item.name && p.store === item.store);
     if (!exists) setWishlist([...wishlist, item]);
   }
 
   function createAlert(item: Product) {
-    const exists = alerts.some(
-      (p) => p.name === item.name && p.store === item.store
-    );
-
+    const exists = alerts.some((p) => p.name === item.name && p.store === item.store);
     if (!exists) setAlerts([...alerts, item]);
   }
 
   function sendChat() {
     if (!chatInput.trim()) return;
 
-    const userMessage: ChatMessage = {
-      role: "user",
-      text: chatInput,
-    };
+    const userMessage: ChatMessage = { role: "user", text: chatInput };
 
     let aiText =
-      "Search for a product first, then I can explain the deal score and best buying time.";
+      "Search for a product first, then I can explain the deal score, best buying time, and whether you should buy or wait.";
 
     if (best) {
-      aiText = `${best.name} from ${best.store}: ${getDecision(
-        getDealScore(best)
-      )}. Best time: ${getBestTime(getDealScore(best))}. ${getAdvancedAI(best)}`;
+      aiText = `${best.name} from ${best.store}: ${getDecision(getDealScore(best))}. Best time: ${getBestTime(getDealScore(best))}. ${getAdvancedAI(best)}`;
     }
 
     setChatMessages([...chatMessages, userMessage, { role: "ai", text: aiText }]);
@@ -227,94 +176,120 @@ export default function Home() {
       </div>
 
       <section className="max-w-7xl mx-auto">
-        <nav className="flex justify-between items-center mb-12">
+        <nav className="flex justify-between items-center mb-14">
           <div>
-            <div className="text-2xl font-black tracking-tight">
-              Smart Buy AI
-            </div>
+            <div className="text-2xl font-black tracking-tight">Smart Buy AI</div>
             <p className="text-xs text-slate-400">AI Shopping Intelligence</p>
           </div>
 
           <div className="hidden md:flex gap-6 text-sm text-slate-300">
-            <span className="hover:text-white">AI Deals</span>
-            <span className="hover:text-white">Price Score</span>
+            <span className="hover:text-white">How it works</span>
+            <span className="hover:text-white">AI Score</span>
             <span className="hover:text-white">Wishlist</span>
             <span className="hover:text-white">Alerts</span>
           </div>
         </nav>
 
-        <div className="text-center mb-10">
-          <div className="inline-block bg-white/8 border border-white/15 px-4 py-2 rounded-full text-sm mb-5 backdrop-blur-xl text-slate-200">
-            ✦ AI-powered shopping assistant
-          </div>
+        <div className="grid lg:grid-cols-2 gap-10 items-center mb-12">
+          <div>
+            <div className="inline-block bg-white/8 border border-white/15 px-4 py-2 rounded-full text-sm mb-5 backdrop-blur-xl text-slate-200">
+              ✦ Built for smarter online decisions
+            </div>
 
-          <h1 className="text-5xl md:text-7xl font-black mb-5 leading-tight tracking-tight">
-            Buy smarter.
-            <br />
-            <span className="bg-gradient-to-r from-cyan-300 via-blue-300 to-violet-300 text-transparent bg-clip-text">
-              Decide faster.
-            </span>
-          </h1>
+            <h1 className="text-5xl md:text-7xl font-black mb-5 leading-tight tracking-tight">
+              Know what to buy.
+              <br />
+              <span className="bg-gradient-to-r from-cyan-300 via-blue-300 to-violet-300 text-transparent bg-clip-text">
+                Before you buy.
+              </span>
+            </h1>
 
-          <p className="text-slate-300 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
-            Compare products, analyze deal quality, track prices, save favorites,
-            and ask Smart Buy AI when to buy.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white/[0.07] border border-white/10 backdrop-blur-xl p-5 rounded-3xl">
-            <p className="text-slate-400 text-sm">Estimated user savings</p>
-            <h2 className="text-3xl font-black mt-2">€1,240</h2>
-          </div>
-
-          <div className="bg-white/[0.07] border border-white/10 backdrop-blur-xl p-5 rounded-3xl">
-            <p className="text-slate-400 text-sm">AI deals analyzed</p>
-            <h2 className="text-3xl font-black mt-2">128</h2>
-          </div>
-
-          <div className="bg-white/[0.07] border border-white/10 backdrop-blur-xl p-5 rounded-3xl">
-            <p className="text-slate-400 text-sm">Active price alerts</p>
-            <h2 className="text-3xl font-black mt-2">{alerts.length}</h2>
-          </div>
-        </div>
-
-        <div className="bg-white/[0.08] backdrop-blur-2xl border border-white/15 p-6 rounded-[28px] shadow-2xl mb-8">
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search: iPhone, laptop, shoes, sofa, perfume..."
-            className="w-full p-4 rounded-2xl bg-[#F8FAFC] text-slate-950 mb-5 outline-none shadow-inner"
-          />
-
-          <div className="flex gap-2 justify-center mb-5 flex-wrap">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm transition ${
-                  category === cat
-                    ? "bg-cyan-400 text-slate-950 font-bold shadow-lg shadow-cyan-400/20"
-                    : "bg-white/[0.07] text-slate-300 border border-white/10 hover:bg-white/15"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-
-          <button
-            onClick={search}
-            className="w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500 text-white px-6 py-4 rounded-2xl font-black transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_0_35px_rgba(56,189,248,0.35)]"
-          >
-            Analyze Best Deal
-          </button>
-
-          {loading && (
-            <p className="text-center text-cyan-300 animate-pulse mt-4">
-              Smart Buy AI is analyzing price, timing, trust, and value...
+            <p className="text-slate-300 text-base md:text-lg leading-relaxed max-w-2xl">
+              Smart Buy AI helps shoppers compare offers, understand deal quality,
+              estimate timing, save products, and avoid bad purchases before checkout.
             </p>
-          )}
+
+            <div className="grid grid-cols-3 gap-3 mt-7">
+              <div className="bg-white/[0.07] border border-white/10 rounded-2xl p-4">
+                <p className="text-2xl font-black">100</p>
+                <p className="text-xs text-slate-400">AI score</p>
+              </div>
+              <div className="bg-white/[0.07] border border-white/10 rounded-2xl p-4">
+                <p className="text-2xl font-black">7+</p>
+                <p className="text-xs text-slate-400">categories</p>
+              </div>
+              <div className="bg-white/[0.07] border border-white/10 rounded-2xl p-4">
+                <p className="text-2xl font-black">24/7</p>
+                <p className="text-xs text-slate-400">alerts ready</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white/[0.08] backdrop-blur-2xl border border-white/15 p-6 rounded-[32px] shadow-2xl">
+            <p className="text-sm text-slate-400 mb-2">Try Smart Buy AI</p>
+
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search: iPhone, laptop, shoes, sofa, perfume..."
+              className="w-full p-4 rounded-2xl bg-[#F8FAFC] text-slate-950 mb-5 outline-none shadow-inner"
+            />
+
+            <div className="flex gap-2 justify-center mb-5 flex-wrap">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setCategory(cat)}
+                  className={`px-4 py-2 rounded-full text-sm transition ${
+                    category === cat
+                      ? "bg-cyan-400 text-slate-950 font-bold shadow-lg shadow-cyan-400/20"
+                      : "bg-white/[0.07] text-slate-300 border border-white/10 hover:bg-white/15"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={search}
+              className="w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500 text-white px-6 py-4 rounded-2xl font-black transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_0_35px_rgba(56,189,248,0.35)]"
+            >
+              Analyze Best Deal
+            </button>
+
+            {loading && (
+              <p className="text-center text-cyan-300 animate-pulse mt-4">
+                Smart Buy AI is analyzing price, timing, trust, and value...
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-4 mb-10">
+          <div className="bg-white/[0.07] border border-white/10 backdrop-blur-xl p-5 rounded-3xl">
+            <p className="text-slate-400 text-sm">What it does</p>
+            <h2 className="text-xl font-black mt-2">Compares offers</h2>
+            <p className="text-sm text-slate-400 mt-2">
+              Helps users evaluate price, rating, delivery, and timing.
+            </p>
+          </div>
+
+          <div className="bg-white/[0.07] border border-white/10 backdrop-blur-xl p-5 rounded-3xl">
+            <p className="text-slate-400 text-sm">Why it matters</p>
+            <h2 className="text-xl font-black mt-2">Avoids bad deals</h2>
+            <p className="text-sm text-slate-400 mt-2">
+              The AI score helps decide whether to buy, wait, or avoid.
+            </p>
+          </div>
+
+          <div className="bg-white/[0.07] border border-white/10 backdrop-blur-xl p-5 rounded-3xl">
+            <p className="text-slate-400 text-sm">Coming next</p>
+            <h2 className="text-xl font-black mt-2">Real store feeds</h2>
+            <p className="text-sm text-slate-400 mt-2">
+              Built to connect with affiliate networks and product feeds.
+            </p>
+          </div>
         </div>
 
         <div className="mb-8">
@@ -338,12 +313,8 @@ export default function Home() {
             <div className="flex justify-between items-start gap-5 flex-wrap">
               <div>
                 <h2 className="text-2xl font-black mb-2">Best AI Pick</h2>
-                <p className="text-xl font-semibold">
-                  {best.name} from {best.store}
-                </p>
-                <p className="text-5xl font-black text-emerald-300 mt-3">
-                  €{best.price}
-                </p>
+                <p className="text-xl font-semibold">{best.name} from {best.store}</p>
+                <p className="text-5xl font-black text-emerald-300 mt-3">€{best.price}</p>
                 <p className="text-slate-400 line-through">€{best.oldPrice}</p>
               </div>
 
@@ -364,8 +335,7 @@ export default function Home() {
                 />
               </div>
               <p className="text-sm mt-2 text-slate-300">
-                Discount: {getDiscountPercent(best)}% — Save €
-                {best.oldPrice - best.price}
+                Discount: {getDiscountPercent(best)}% — Save €{best.oldPrice - best.price}
               </p>
             </div>
 
@@ -442,25 +412,13 @@ export default function Home() {
                   </div>
 
                   <div className="flex gap-2 mt-4 flex-wrap">
-                    <a
-                      href={item.link}
-                      target="_blank"
-                      className="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-xl font-bold"
-                    >
+                    <a href={item.link} target="_blank" className="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-xl font-bold">
                       Check Price
                     </a>
-
-                    <button
-                      onClick={() => saveProduct(item)}
-                      className="bg-white/[0.10] border border-white/15 hover:bg-white/[0.18] px-4 py-2 rounded-xl font-bold"
-                    >
+                    <button onClick={() => saveProduct(item)} className="bg-white/[0.10] border border-white/15 hover:bg-white/[0.18] px-4 py-2 rounded-xl font-bold">
                       Save
                     </button>
-
-                    <button
-                      onClick={() => createAlert(item)}
-                      className="bg-cyan-400 hover:bg-cyan-300 text-slate-950 px-4 py-2 rounded-xl font-black"
-                    >
+                    <button onClick={() => createAlert(item)} className="bg-cyan-400 hover:bg-cyan-300 text-slate-950 px-4 py-2 rounded-xl font-black">
                       Alert
                     </button>
                   </div>
@@ -478,7 +436,6 @@ export default function Home() {
           <aside className="space-y-6">
             <div className="bg-white/[0.07] border border-white/10 p-5 rounded-3xl">
               <h2 className="text-xl font-black mb-3">AI Shopping Chat</h2>
-
               <div className="h-56 overflow-y-auto space-y-3 mb-4">
                 {chatMessages.map((msg, i) => (
                   <div
@@ -493,7 +450,6 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-
               <div className="flex gap-2">
                 <input
                   value={chatInput}
@@ -501,10 +457,7 @@ export default function Home() {
                   placeholder="Ask: should I buy now?"
                   className="flex-1 p-3 rounded-xl bg-white text-slate-950 outline-none"
                 />
-                <button
-                  onClick={sendChat}
-                  className="bg-cyan-400 text-slate-950 px-4 rounded-xl font-black"
-                >
+                <button onClick={sendChat} className="bg-cyan-400 text-slate-950 px-4 rounded-xl font-black">
                   Send
                 </button>
               </div>
@@ -518,9 +471,7 @@ export default function Home() {
                 wishlist.map((item, i) => (
                   <div key={i} className="border-b border-white/10 py-2">
                     <p className="font-bold">{item.name}</p>
-                    <p className="text-sm text-slate-400">
-                      {item.store} — €{item.price}
-                    </p>
+                    <p className="text-sm text-slate-400">{item.store} — €{item.price}</p>
                   </div>
                 ))
               )}
@@ -534,9 +485,7 @@ export default function Home() {
                 alerts.map((item, i) => (
                   <div key={i} className="border-b border-white/10 py-2">
                     <p className="font-bold">{item.name}</p>
-                    <p className="text-sm text-slate-400">
-                      Notify below €{item.price - 20}
-                    </p>
+                    <p className="text-sm text-slate-400">Notify below €{item.price - 20}</p>
                   </div>
                 ))
               )}
@@ -546,9 +495,7 @@ export default function Home() {
 
         <footer className="mt-20 text-center text-slate-500 text-sm">
           <p>© 2026 Smart Buy AI</p>
-          <p className="mt-1">
-            AI-powered shopping assistant | Affiliate links may earn commission
-          </p>
+          <p className="mt-1">AI-powered shopping assistant | Affiliate links may earn commission</p>
         </footer>
       </section>
     </main>
