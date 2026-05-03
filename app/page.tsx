@@ -107,7 +107,7 @@ export default function Home() {
     if (score >= 85) return "🔥 Buy Now";
     if (score >= 65) return "✅ Good Deal";
     if (score >= 45) return "⚠️ Wait";
-    return "❌ Avoid For Now";
+    return "❌ Avoid";
   }
 
   function getAiAnalysis(item: Product) {
@@ -115,27 +115,37 @@ export default function Home() {
     const saving = item.oldPrice - item.price;
 
     if (score >= 85) {
-      return `This is a strong deal. The price is €${saving} lower than usual, rating is good, and buying now is recommended.`;
+      return `Strong deal. You save €${saving}, rating is high, and buying now is recommended.`;
     }
 
     if (score >= 65) {
-      return `This is a good deal, but not perfect. You can buy now if you need it, but waiting may give you a slightly better price.`;
+      return `Good deal. You can buy now, but waiting may give you a slightly better price.`;
     }
 
     if (score >= 45) {
-      return `The price is average. Smart Buy AI recommends waiting a few days unless you need it urgently.`;
+      return `Average price. Smart Buy AI recommends waiting a few days if not urgent.`;
     }
 
-    return `This deal is not attractive right now. The discount is weak compared to the usual price. Waiting is recommended.`;
+    return `Weak deal. Waiting is recommended because the discount is not attractive.`;
   }
 
   function getBestTimeToBuy(item: Product) {
     const score = getDealScore(item);
+    if (score >= 85) return "Buy today";
+    if (score >= 65) return "This week";
+    if (score >= 45) return "Wait 7-14 days";
+    return "Wait for discount";
+  }
 
-    if (score >= 85) return "Best time: Buy today";
-    if (score >= 65) return "Best time: This week";
-    if (score >= 45) return "Best time: Wait 7-14 days";
-    return "Best time: Wait for a discount";
+  function quickSearch(productName: string) {
+    setQuery(productName);
+
+    const filtered = products
+      .filter((item) => item.name.toLowerCase().includes(productName.toLowerCase()))
+      .sort((a, b) => getDealScore(b) - getDealScore(a));
+
+    setResults(filtered);
+    setBest(filtered[0] || null);
   }
 
   function search() {
@@ -157,43 +167,49 @@ export default function Home() {
     setBest(filtered[0] || null);
   }
 
-  function quickSearch(productName: string) {
-    setQuery(productName);
-
-    const filtered = products
-      .filter((item) => item.name.toLowerCase().includes(productName.toLowerCase()))
-      .sort((a, b) => getDealScore(b) - getDealScore(a));
-
-    setResults(filtered);
-    setBest(filtered[0] || null);
-  }
-
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
-      <section className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">Smart Buy AI</h1>
-          <p className="text-gray-600">
-            AI shopping assistant that helps you decide what to buy, where to buy,
-            and when to buy.
+    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white p-6">
+      <section className="max-w-6xl mx-auto">
+        <nav className="flex justify-between items-center mb-10">
+          <div className="text-2xl font-bold">Smart Buy AI</div>
+          <div className="hidden md:flex gap-4 text-sm text-slate-300">
+            <span>AI Deals</span>
+            <span>Price Score</span>
+            <span>Best Time</span>
+          </div>
+        </nav>
+
+        <div className="text-center mb-10">
+          <div className="inline-block bg-white/10 border border-white/20 px-4 py-2 rounded-full text-sm mb-4">
+            ⚡ AI Shopping Assistant
+          </div>
+
+          <h1 className="text-5xl font-extrabold mb-4">
+            Buy smarter. Save faster.
+          </h1>
+
+          <p className="text-slate-300 max-w-2xl mx-auto">
+            Compare deals, understand price quality, and know when to buy with AI-powered recommendations.
           </p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl shadow mb-6 text-center">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-2xl shadow-2xl mb-8">
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search product: iphone 13, jacket, sofa..."
-            className="border p-3 w-full rounded mb-4"
+            className="w-full p-4 rounded-xl bg-white text-black mb-4 outline-none"
           />
 
-          <div className="flex gap-2 justify-center mb-4 flex-wrap">
+          <div className="flex gap-2 justify-center mb-5 flex-wrap">
             {["All", "Electronics", "Clothing", "Home"].map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategory(cat)}
-                className={`px-4 py-2 rounded ${
-                  category === cat ? "bg-black text-white" : "bg-gray-200 text-black"
+                className={`px-5 py-2 rounded-full ${
+                  category === cat
+                    ? "bg-indigo-500 text-white"
+                    : "bg-white/10 text-slate-200 border border-white/20"
                 }`}
               >
                 {cat}
@@ -203,84 +219,81 @@ export default function Home() {
 
           <button
             onClick={search}
-            className="bg-black text-white px-6 py-3 rounded font-semibold"
+            className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-4 rounded-xl font-bold hover:scale-[1.01] transition"
           >
             Find Best Deal
           </button>
         </div>
 
-        <div className="bg-white p-5 rounded-xl shadow mb-6">
-          <h2 className="text-xl font-bold mb-3">🔥 Trending Now</h2>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {["iphone 13", "iphone 15", "jacket", "sofa"].map((item) => (
-              <button
-                key={item}
-                onClick={() => quickSearch(item)}
-                className="border p-3 rounded hover:bg-gray-100"
-              >
-                {item}
-              </button>
-            ))}
-          </div>
+        <div className="grid md:grid-cols-4 gap-4 mb-8">
+          {["iphone 13", "iphone 15", "jacket", "sofa"].map((item) => (
+            <button
+              key={item}
+              onClick={() => quickSearch(item)}
+              className="bg-white/10 border border-white/20 rounded-xl p-4 text-left hover:bg-white/20 transition"
+            >
+              <p className="text-sm text-slate-400">Trending</p>
+              <p className="font-bold">{item}</p>
+            </button>
+          ))}
         </div>
 
         {best && (
-          <div className="bg-green-50 border border-green-500 p-5 rounded-xl mb-6">
-            <h2 className="text-2xl font-bold mb-2">🏆 Best AI Pick</h2>
-
-            <p className="font-bold text-lg">
-              {best.name} from {best.store}
-            </p>
-
-            <p className="text-2xl font-bold text-green-700">€{best.price}</p>
-
-            <p className="text-sm text-gray-500 line-through">
-              Usual price: €{best.oldPrice}
-            </p>
-
-            <p className="mt-2">
-              Save: <strong>€{best.oldPrice - best.price}</strong>
-            </p>
-
-            <div className="mt-3">
-              <div className="bg-gray-200 h-2 rounded">
-                <div
-                  className="bg-green-500 h-2 rounded"
-                  style={{ width: `${getDiscountPercent(best)}%` }}
-                ></div>
+          <div className="bg-emerald-500/10 border border-emerald-400/40 p-6 rounded-2xl mb-8 shadow-xl">
+            <div className="flex justify-between items-start gap-4 flex-wrap">
+              <div>
+                <h2 className="text-2xl font-bold mb-2">🏆 Best AI Pick</h2>
+                <p className="text-xl font-semibold">
+                  {best.name} from {best.store}
+                </p>
+                <p className="text-4xl font-extrabold text-emerald-300 mt-2">
+                  €{best.price}
+                </p>
+                <p className="text-slate-400 line-through">€{best.oldPrice}</p>
               </div>
-              <p className="text-sm mt-1">Discount: {getDiscountPercent(best)}%</p>
+
+              <div className="bg-black/30 rounded-2xl p-4 min-w-[160px]">
+                <p className="text-sm text-slate-300">AI Score</p>
+                <p className="text-4xl font-bold">{getDealScore(best)}/100</p>
+                <p className="mt-2">{getDecision(getDealScore(best))}</p>
+              </div>
             </div>
 
-            <p className="mt-2">
-              Rating: <strong>{best.rating}/5 ⭐</strong>
-            </p>
-
-            <p className="mt-2">
-              Deal Score: <strong>{getDealScore(best)}/100</strong>
-            </p>
-
-            <p className="mt-2 font-bold">{getDecision(getDealScore(best))}</p>
-
-            <div className="mt-4 bg-yellow-100 p-3 rounded">
-              <p className="font-semibold">📊 AI Alert</p>
-              <p className="text-sm">
-                Prices for this product may drop during sales events. Smart Buy AI
-                recommends checking again before major shopping days.
+            <div className="mt-5">
+              <div className="bg-white/20 h-3 rounded-full">
+                <div
+                  className="bg-emerald-400 h-3 rounded-full"
+                  style={{ width: `${getDiscountPercent(best)}%` }}
+                />
+              </div>
+              <p className="text-sm mt-2">
+                Discount: {getDiscountPercent(best)}% — Save €{best.oldPrice - best.price}
               </p>
             </div>
 
-            <p className="mt-4 text-gray-700">{getAiAnalysis(best)}</p>
+            <div className="grid md:grid-cols-3 gap-4 mt-5">
+              <div className="bg-white/10 p-4 rounded-xl">
+                ⭐ Rating: {best.rating}/5
+              </div>
+              <div className="bg-white/10 p-4 rounded-xl">
+                📦 Delivery: {best.delivery}
+              </div>
+              <div className="bg-white/10 p-4 rounded-xl">
+                ⏳ Best time: {getBestTimeToBuy(best)}
+              </div>
+            </div>
 
-            <p className="mt-2 font-semibold">{getBestTimeToBuy(best)}</p>
-
-            <p className="mt-2 text-sm text-gray-600">Delivery: {best.delivery}</p>
+            <div className="mt-5 bg-yellow-300/20 border border-yellow-300/30 p-4 rounded-xl">
+              <p className="font-bold">📊 AI Alert</p>
+              <p className="text-sm text-slate-200">
+                {getAiAnalysis(best)}
+              </p>
+            </div>
 
             <a
               href={best.link}
               target="_blank"
-              className="bg-green-600 text-white px-4 py-2 rounded inline-block mt-4"
+              className="inline-block mt-5 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold"
             >
               View Best Deal
             </a>
@@ -288,43 +301,47 @@ export default function Home() {
         )}
 
         {results.length > 0 && (
-          <h2 className="text-xl font-bold mb-4 text-center">All Results</h2>
+          <h2 className="text-2xl font-bold mb-4">All Results</h2>
         )}
 
-        {results.map((item, i) => (
-          <div key={i} className="bg-white border p-4 mb-4 rounded-xl shadow">
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="font-bold text-lg">{item.store}</p>
-                <p className="text-gray-600">{item.name}</p>
-              </div>
-
-              <div className="text-right">
-                <p className="text-xl font-bold">€{item.price}</p>
-                <p className="text-sm text-gray-400 line-through">€{item.oldPrice}</p>
-              </div>
-            </div>
-
-            <div className="mt-3">
-              <p>⭐ Rating: {item.rating}/5</p>
-              <p>📦 Delivery: {item.delivery}</p>
-              <p>🧠 AI Score: {getDealScore(item)}/100</p>
-              <p>💰 Discount: {getDiscountPercent(item)}%</p>
-              <p className="font-semibold">{getDecision(getDealScore(item))}</p>
-            </div>
-
-            <a
-              href={item.link}
-              target="_blank"
-              className="bg-blue-600 text-white px-4 py-2 rounded inline-block mt-3"
+        <div className="grid md:grid-cols-2 gap-4">
+          {results.map((item, i) => (
+            <div
+              key={i}
+              className="bg-white/10 border border-white/20 p-5 rounded-2xl hover:bg-white/15 transition"
             >
-              Check Price
-            </a>
-          </div>
-        ))}
+              <div className="flex justify-between">
+                <div>
+                  <p className="font-bold text-xl">{item.store}</p>
+                  <p className="text-slate-300">{item.name}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-2xl font-bold">€{item.price}</p>
+                  <p className="line-through text-slate-400">€{item.oldPrice}</p>
+                </div>
+              </div>
+
+              <div className="mt-4 text-sm text-slate-300 space-y-1">
+                <p>⭐ Rating: {item.rating}/5</p>
+                <p>📦 Delivery: {item.delivery}</p>
+                <p>🧠 AI Score: {getDealScore(item)}/100</p>
+                <p>💰 Discount: {getDiscountPercent(item)}%</p>
+                <p className="font-bold text-white">{getDecision(getDealScore(item))}</p>
+              </div>
+
+              <a
+                href={item.link}
+                target="_blank"
+                className="inline-block mt-4 bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-semibold"
+              >
+                Check Price
+              </a>
+            </div>
+          ))}
+        </div>
 
         {results.length === 0 && (
-          <p className="text-gray-500 mt-6 text-center">
+          <p className="text-center text-slate-400 mt-10">
             Search for a product to see AI recommendations.
           </p>
         )}
