@@ -40,14 +40,28 @@ export default function Home() {
   const [maxPrice, setMaxPrice] = useState("");
 
   const stores = [
-    { store: "Amazon", mod: 0.92, delivery: "Fast", trust: "High", link: "https://www.amazon.nl/s?k=" },
-    { store: "Bol.com", mod: 0.95, delivery: "Fast", trust: "High", link: "https://www.bol.com/nl/nl/s/?searchtext=" },
-    { store: "MediaMarkt", mod: 1.04, delivery: "Fast", trust: "High", link: "https://www.mediamarkt.nl/nl/search.html?query=" },
-    { store: "Coolblue", mod: 0.98, delivery: "Fast", trust: "High", link: "https://www.coolblue.nl/zoeken?query=" },
-    { store: "IKEA", mod: 0.9, delivery: "Medium", trust: "Medium", link: "https://www.ikea.com/nl/en/search/?q=" },
-    { store: "AliExpress", mod: 0.76, delivery: "Slow", trust: "Medium", link: "https://www.aliexpress.com/wholesale?SearchText=" },
-    { store: "Temu", mod: 0.7, delivery: "Slow", trust: "New", link: "https://www.temu.com/search_result.html?search_key=" },
+    { store: "Amazon", mod: 0.92, delivery: "Fast", trust: "High" },
+    { store: "Bol.com", mod: 0.95, delivery: "Fast", trust: "High" },
+    { store: "MediaMarkt", mod: 1.04, delivery: "Fast", trust: "High" },
+    { store: "Coolblue", mod: 0.98, delivery: "Fast", trust: "High" },
+    { store: "IKEA", mod: 0.9, delivery: "Medium", trust: "Medium" },
+    { store: "AliExpress", mod: 0.76, delivery: "Slow", trust: "Medium" },
+    { store: "Temu", mod: 0.7, delivery: "Slow", trust: "New" },
   ] as const;
+
+  function getAffiliateLink(store: string, search: string) {
+    const q = encodeURIComponent(search);
+
+    if (store === "Amazon") return `https://www.amazon.nl/s?k=${q}`;
+    if (store === "Bol.com") return `https://www.bol.com/nl/nl/s/?searchtext=${q}`;
+    if (store === "MediaMarkt") return `https://www.mediamarkt.nl/nl/search.html?query=${q}`;
+    if (store === "Coolblue") return `https://www.coolblue.nl/zoeken?query=${q}`;
+    if (store === "IKEA") return `https://www.ikea.com/nl/en/search/?q=${q}`;
+    if (store === "AliExpress") return `https://www.aliexpress.com/wholesale?SearchText=${q}`;
+    if (store === "Temu") return `https://www.temu.com/search_result.html?search_key=${q}`;
+
+    return `https://www.google.com/search?q=${q}+${store}`;
+  }
 
   function extractBudget(text: string) {
     const match = text.match(/(?:under|below|max|budget|€)\s*€?\s*(\d+)/i);
@@ -109,7 +123,7 @@ export default function Home() {
         rating,
         delivery: s.delivery as Delivery,
         trust: s.trust as Trust,
-        link: `${s.link}${encodeURIComponent(productName)}`,
+        link: getAffiliateLink(s.store, productName),
       };
     });
   }
@@ -231,6 +245,11 @@ export default function Home() {
     document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" });
   }
 
+  function choosePlan(plan: string) {
+    setMessage(`${plan} selected. Payment integration with Stripe will be added later.`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#050713] text-white text-[15px]">
       <div className="absolute inset-0 -z-10">
@@ -246,10 +265,10 @@ export default function Home() {
         </div>
 
         <div className="hidden md:flex gap-6 text-[13px] text-white/65">
-          <button>AI Deals</button>
-          <button>Compare</button>
+          <button onClick={() => quickSearch("gaming laptop")}>AI Deals</button>
+          <button onClick={() => document.getElementById("compare")?.scrollIntoView({ behavior: "smooth" })}>Compare</button>
           <button onClick={scrollToPricing}>Pricing</button>
-          <button>Alerts</button>
+          <button onClick={() => document.getElementById("alerts")?.scrollIntoView({ behavior: "smooth" })}>Alerts</button>
         </div>
 
         <button
@@ -394,7 +413,7 @@ export default function Home() {
       )}
 
       {offers.length > 0 && !loading && (
-        <section className="max-w-6xl mx-auto px-6 mt-10">
+        <section id="compare" className="max-w-6xl mx-auto px-6 mt-10">
           <div className="bg-white/10 border border-white/10 rounded-3xl p-5 mb-6">
             <h2 className="text-xl font-black mb-4">Filters</h2>
             <div className="grid md:grid-cols-4 gap-3">
@@ -495,7 +514,7 @@ export default function Home() {
         </section>
       )}
 
-      <section className="max-w-6xl mx-auto px-6 mt-20 grid md:grid-cols-2 gap-5">
+      <section id="alerts" className="max-w-6xl mx-auto px-6 mt-20 grid md:grid-cols-2 gap-5">
         <div className="bg-white/10 border border-white/10 rounded-3xl p-6">
           <h3 className="text-2xl font-black">Saved products</h3>
           {saved.length === 0 ? (
@@ -541,10 +560,7 @@ export default function Home() {
               <p className="text-4xl font-black mt-3">{price}</p>
               <p className="text-white/60 mt-2 text-sm">{text}</p>
               <button
-                onClick={() => {
-                  setMessage(`${plan} selected. Payment integration will be added later.`);
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
+                onClick={() => choosePlan(plan)}
                 className="mt-5 bg-white text-black px-5 py-3 rounded-2xl font-black"
               >
                 Get started
