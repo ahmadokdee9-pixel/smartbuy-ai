@@ -67,16 +67,38 @@ export default function Home() {
 
   function whyImportant(p: Product) {
     const score = getScore(p);
+
     if (score >= 85) {
-      return "This offer has a strong balance of price, rating, and store reliability.";
+      return "This is a strong buy right now. The product has a strong balance of price, rating, and store reliability.";
     }
+
     if (score >= 70) {
-      return "This looks good, but Smart Buy AI recommends comparing it with cheaper options first.";
+      return "This is a good option, but Smart Buy AI recommends comparing it with cheaper alternatives before buying.";
     }
+
     if (score >= 55) {
-      return "This product may be acceptable, but the price or rating is not strong enough yet.";
+      return "This product is average. It may be better to wait or check other options first.";
     }
-    return "This option looks weak compared with other results. Better to avoid or wait.";
+
+    return "This option looks weak compared with other available results. Better to avoid or wait.";
+  }
+
+  function smartDecisionText(p: Product) {
+    const score = getScore(p);
+
+    if (score >= 85) {
+      return "Smart Buy AI recommends buying this now. The price looks competitive, the rating is strong, and the store signal is reliable compared with other results.";
+    }
+
+    if (score >= 70) {
+      return "This is a good buying option, but not perfect. Compare delivery, final checkout price, and similar products before making a final decision.";
+    }
+
+    if (score >= 55) {
+      return "This product is acceptable, but the deal is not strong enough. Waiting or checking alternatives may give you better value.";
+    }
+
+    return "Smart Buy AI does not recommend this option right now. The score is weak compared with other products in the search results.";
   }
 
   const sortedProducts = useMemo(() => {
@@ -226,57 +248,81 @@ export default function Home() {
       )}
 
       {best && !loading && (
-        <section className="max-w-6xl mx-auto px-6 mt-12">
-          <div className="relative overflow-hidden rounded-[34px] border border-emerald-300/25 bg-emerald-400/10 backdrop-blur-2xl p-6 shadow-2xl">
-            <p className="text-emerald-300 font-black text-sm mb-4">🏆 BEST AI PICK</p>
+        <>
+          <section className="max-w-6xl mx-auto px-6 mt-12">
+            <div className="relative overflow-hidden rounded-[34px] border border-emerald-300/25 bg-emerald-400/10 backdrop-blur-2xl p-6 shadow-2xl">
+              <p className="text-emerald-300 font-black text-sm mb-4">🏆 BEST AI PICK</p>
 
-            <div className="grid md:grid-cols-[180px_1fr_170px] gap-6 items-center">
-              {best.image && (
-                <img
-                  src={best.image}
-                  alt={best.title}
-                  className="w-full h-40 object-contain bg-white rounded-2xl p-3"
-                />
-              )}
+              <div className="grid md:grid-cols-[180px_1fr_170px] gap-6 items-center">
+                {best.image && (
+                  <img
+                    src={best.image}
+                    alt={best.title}
+                    className="w-full h-40 object-contain bg-white rounded-2xl p-3"
+                  />
+                )}
 
-              <div>
-                <h3 className="text-2xl md:text-3xl font-black">{best.title}</h3>
-                <p className="text-white/60 mt-1">{best.store}</p>
-                <p className="text-5xl font-black text-emerald-300 mt-4">€{best.price}</p>
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-black">{best.title}</h3>
+                  <p className="text-white/60 mt-1">{best.store}</p>
+                  <p className="text-5xl font-black text-emerald-300 mt-4">€{best.price}</p>
 
-                <p className={`inline-flex mt-3 px-3 py-1 rounded-full border text-sm font-black ${decisionStyle(getScore(best))}`}>
-                  {decision(getScore(best))}
-                </p>
+                  <p className={`inline-flex mt-3 px-3 py-1 rounded-full border text-sm font-black ${decisionStyle(getScore(best))}`}>
+                    {decision(getScore(best))}
+                  </p>
 
-                <p className="text-white/70 mt-4 text-sm">
-                  {whyImportant(best)}
-                </p>
+                  <p className="text-white/70 mt-4 text-sm">
+                    {whyImportant(best)}
+                  </p>
 
-                <div className="flex gap-3 mt-5">
-                  <a
-                    href={best.link}
-                    target="_blank"
-                    className="bg-white text-black px-5 py-3 rounded-2xl font-black"
-                  >
-                    View Offer
-                  </a>
+                  <div className="flex gap-3 mt-5">
+                    <a
+                      href={best.link}
+                      target="_blank"
+                      className="bg-white text-black px-5 py-3 rounded-2xl font-black"
+                    >
+                      View Offer
+                    </a>
 
-                  <button
-                    onClick={() => saveProduct(best)}
-                    className="bg-emerald-400 text-black px-5 py-3 rounded-2xl font-black"
-                  >
-                    Save
-                  </button>
+                    <button
+                      onClick={() => saveProduct(best)}
+                      className="bg-emerald-400 text-black px-5 py-3 rounded-2xl font-black"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+
+                <div className="rounded-3xl bg-black/30 border border-white/10 p-5 text-center">
+                  <p className="text-white/50 text-sm">AI Score</p>
+                  <p className="text-5xl font-black">{getScore(best)}/100</p>
                 </div>
               </div>
+            </div>
+          </section>
 
-              <div className="rounded-3xl bg-black/30 border border-white/10 p-5 text-center">
-                <p className="text-white/50 text-sm">AI Score</p>
-                <p className="text-5xl font-black">{getScore(best)}/100</p>
+          <section className="max-w-6xl mx-auto px-6 mt-6">
+            <div className="rounded-3xl bg-white/10 border border-white/10 p-6 backdrop-blur-xl">
+              <h3 className="text-xl font-black mb-3">🧠 Smart Buy AI Decision</h3>
+
+              <p className="text-white/70 text-sm leading-relaxed">
+                {smartDecisionText(best)}
+              </p>
+
+              <div className="mt-5 grid md:grid-cols-3 gap-3 text-xs text-white/65">
+                <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-2xl">
+                  📊 Price signal: analyzed against available search results.
+                </div>
+                <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-2xl">
+                  ⭐ Rating signal: higher ratings improve the AI score.
+                </div>
+                <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-2xl">
+                  🏪 Store signal: known stores receive stronger trust weight.
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </>
       )}
 
       <section className="max-w-6xl mx-auto px-6 mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
