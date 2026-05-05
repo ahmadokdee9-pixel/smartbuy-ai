@@ -162,12 +162,33 @@ export default function Home() {
           <p className="text-xs text-white/45">Quantitative AI buying decision engine</p>
         </div>
 
-        <div className="hidden md:flex gap-5 text-sm text-white/55">
-          <span>AI Deals</span>
-          <span>Price Score</span>
-          <span>Alerts</span>
-          <span>Pro Tools</span>
-        </div>
+        <div className="hidden md:flex gap-5 text-sm text-white/70 items-center">
+
+  <span className="hover:text-cyan-300 transition cursor-pointer">
+    AI Deals
+  </span>
+
+  <span className="hover:text-cyan-300 transition cursor-pointer">
+    Price Score
+  </span>
+
+  <span className="hover:text-cyan-300 transition cursor-pointer">
+    Alerts
+  </span>
+
+  <span className="hover:text-cyan-300 transition cursor-pointer">
+    Pro Tools
+  </span>
+
+  <button className="px-4 py-2 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition">
+    Login
+  </button>
+
+  <button className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-400 to-purple-500 text-white font-bold hover:scale-105 transition-all duration-300 shadow-lg shadow-cyan-500/30">
+    Get Started
+  </button>
+
+</div>
       </nav>
 
       <section className="max-w-6xl mx-auto px-6 pt-14 text-center">
@@ -212,10 +233,18 @@ export default function Home() {
         </div>
 
         {loading && (
-          <p className="mt-6 text-cyan-300 animate-pulse">
-            Searching real products and analyzing best buying options...
-          </p>
-        )}
+  <div className="mt-8 flex flex-col items-center gap-4">
+    <div className="relative w-16 h-16">
+      <div className="absolute inset-0 rounded-full border-4 border-cyan-400/20"></div>
+      <div className="absolute inset-0 rounded-full border-4 border-t-cyan-300 border-r-purple-400 border-b-transparent border-l-transparent animate-spin"></div>
+      <div className="absolute inset-4 rounded-full bg-cyan-300/20 blur-sm"></div>
+    </div>
+
+    <p className="text-cyan-200 text-sm animate-pulse">
+      QuantAI is scanning live prices, ratings, and store signals...
+    </p>
+  </div>
+)}
       </section>
 
       {products.length > 0 && (
@@ -328,9 +357,9 @@ export default function Home() {
 
           return (
             <div
-              key={p.id}
-              className="rounded-[28px] bg-white/10 border border-white/10 backdrop-blur-xl p-5 hover:bg-white/15 hover:scale-[1.015] transition"
-            >
+  key={p.id}
+  className="rounded-[28px] bg-white/5 border border-white/10 backdrop-blur-xl p-5 hover:-translate-y-2 hover:scale-[1.02] hover:border-cyan-400/40 hover:shadow-[0_0_40px_rgba(34,211,238,0.25)] transition-all duration-500 animate-[fadeIn_0.6s_ease]"
+>
               {p.image && (
                 <div className="bg-white rounded-2xl p-3 mb-4">
                   <img src={p.image} alt={p.title} className="w-full h-40 object-contain" />
@@ -348,8 +377,25 @@ export default function Home() {
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-white/65">
-                <div className="rounded-xl bg-white/5 border border-white/10 p-2 hover:scale-105 hover:shadow-2xl transition-all duration-300">Rating: {p.rating}</div>
-                <div className="rounded-xl bg-white/5 border border-white/10 p-2">AI: {score}/100</div>
+                <div className={`px-4 py-3 rounded-2xl border backdrop-blur-xl ${
+  score >= 85
+    ? "bg-emerald-400/10 border-emerald-400/30 text-emerald-300"
+    : score >= 70
+    ? "bg-cyan-400/10 border-cyan-400/30 text-cyan-300"
+    : score >= 55
+    ? "bg-yellow-400/10 border-yellow-400/30 text-yellow-300"
+    : "bg-red-400/10 border-red-400/30 text-red-300"
+}`}>
+
+  <p className="text-xs opacity-70 mb-1">
+    AI Confidence
+  </p>
+
+  <p className="text-3xl font-black">
+    {score}%
+  </p>
+
+</div>
               </div>
 
               <p className="text-white/60 text-sm mt-4">
@@ -401,6 +447,114 @@ export default function Home() {
           </p>
         </div>
       </section>
-    </main>
+    <section className="max-w-7xl mx-auto px-6 py-24">
+
+  <div className="text-center mb-16">
+    <p className="text-cyan-300 font-semibold mb-3">
+      QUANTAI PLANS
+    </p>
+
+    <h2 className="text-5xl font-black text-white mb-5">
+      Choose your AI power
+    </h2>
+
+    <p className="text-white/60 max-w-2xl mx-auto">
+      Unlock advanced AI shopping intelligence, price tracking,
+      smart alerts, and premium decision tools.
+    </p>
+  </div>
+
+  <div className="grid md:grid-cols-3 gap-8">
+
+    {/* FREE */}
+    <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 hover:scale-105 transition-all duration-300">
+
+      <h3 className="text-2xl font-black text-white mb-2">
+        Free
+      </h3>
+
+      <p className="text-white/50 mb-6">
+        Perfect for casual users.
+      </p>
+
+      <div className="text-5xl font-black text-white mb-6">
+        €0
+      </div>
+
+      <div className="space-y-4 text-white/70 mb-8">
+        <p>✓ Basic AI search</p>
+        <p>✓ AI product scores</p>
+        <p>✓ Save products</p>
+      </div>
+
+      <button className="w-full py-3 rounded-2xl bg-white text-black font-bold hover:scale-105 transition">
+        Current Plan
+      </button>
+    </div>
+
+    {/* PRO */}
+    <div className="rounded-3xl border border-cyan-400/30 bg-cyan-400/10 backdrop-blur-xl p-8 scale-105 shadow-[0_0_40px_rgba(34,211,238,0.25)] relative">
+
+      <div className="absolute top-4 right-4 bg-cyan-400 text-black text-xs font-black px-3 py-1 rounded-full">
+        MOST POPULAR
+      </div>
+
+      <h3 className="text-2xl font-black text-white mb-2">
+        Pro
+      </h3>
+
+      <p className="text-white/60 mb-6">
+        For serious smart buyers.
+      </p>
+
+      <div className="text-5xl font-black text-white mb-6">
+        €19
+        <span className="text-lg text-white/50">/mo</span>
+      </div>
+
+      <div className="space-y-4 text-white/80 mb-8">
+        <p>✓ Advanced AI analysis</p>
+        <p>✓ Real-time smart alerts</p>
+        <p>✓ Unlimited saved products</p>
+        <p>✓ AI recommendations</p>
+        <p>✓ Faster search engine</p>
+      </div>
+
+      <button className="w-full py-3 rounded-2xl bg-gradient-to-r from-cyan-400 to-purple-500 text-white font-black hover:scale-105 transition-all duration-300">
+        Upgrade to Pro
+      </button>
+    </div>
+
+    {/* BUSINESS */}
+    <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 hover:scale-105 transition-all duration-300">
+
+      <h3 className="text-2xl font-black text-white mb-2">
+        Business
+      </h3>
+
+      <p className="text-white/50 mb-6">
+        AI tools for teams and companies.
+      </p>
+
+      <div className="text-5xl font-black text-white mb-6">
+        €99
+        <span className="text-lg text-white/50">/mo</span>
+      </div>
+
+      <div className="space-y-4 text-white/70 mb-8">
+        <p>✓ Team dashboards</p>
+        <p>✓ AI market analytics</p>
+        <p>✓ API access</p>
+        <p>✓ Premium alerts</p>
+        <p>✓ Priority support</p>
+      </div>
+
+      <button className="w-full py-3 rounded-2xl bg-white text-black font-bold hover:scale-105 transition">
+        Contact Sales
+      </button>
+    </div>
+
+  </div>
+</section></main>
   );
 }
