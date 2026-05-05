@@ -73,7 +73,7 @@ export default function Home() {
     }
 
     if (score >= 70) {
-      return "This is a good option, but Smart Buy AI recommends comparing it with cheaper alternatives before buying.";
+      return "This is a good option, but QuantAI recommends comparing it with cheaper alternatives before buying.";
     }
 
     if (score >= 55) {
@@ -87,7 +87,7 @@ export default function Home() {
     const score = getScore(p);
 
     if (score >= 85) {
-      return "Smart Buy AI recommends buying this now. The price looks competitive, the rating is strong, and the store signal is reliable compared with other results.";
+      return "QuantAI recommends buying this now. The price looks competitive, the rating is strong, and the store signal is reliable compared with other results.";
     }
 
     if (score >= 70) {
@@ -98,7 +98,7 @@ export default function Home() {
       return "This product is acceptable, but the deal is not strong enough. Waiting or checking alternatives may give you better value.";
     }
 
-    return "Smart Buy AI does not recommend this option right now. The score is weak compared with other products in the search results.";
+    return "QuantAI does not recommend this option right now. The score is weak compared with other products in the search results.";
   }
 
   const sortedProducts = useMemo(() => {
@@ -152,15 +152,14 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-[#050713] text-white relative overflow-hidden">
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_10%,rgba(34,211,238,0.35),transparent_28%),radial-gradient(circle_at_78%_20%,rgba(168,85,247,0.28),transparent_26%),radial-gradient(circle_at_50%_90%,rgba(16,185,129,0.18),transparent_35%),linear-gradient(135deg,#050713,#0b1020,#111827)]" />
-        <div className="absolute inset-0 opacity-20 bg-[linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:56px_56px]" />
-      </div>
-
+  <div className="absolute inset-0 opacity-80 pointer-events-none">
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(56,189,248,0.2),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(139,92,246,0.2),transparent_40%)]"></div>
+    <div className="absolute inset-0 bg-[linear-gradient(rgba(56,189,248,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(56,189,248,0.08)_1px,transparent_1px)] ai-grid-motion,linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+  </div>
       <nav className="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
         <div>
-          <h1 className="text-xl font-black">Smart Buy AI</h1>
-          <p className="text-xs text-white/45">AI shopping intelligence engine</p>
+          <h1 className="text-xl font-black">QuantAI</h1>
+          <p className="text-xs text-white/45">Quantitative AI buying decision engine</p>
         </div>
 
         <div className="hidden md:flex gap-5 text-sm text-white/55">
@@ -176,16 +175,15 @@ export default function Home() {
           ✦ Real-time AI shopping advisor
         </div>
 
-        <h2 className="text-5xl md:text-7xl font-black leading-tight">
-          Find the smartest way
-          <br />
+        <h2 className="text-5xl md:text-7xl font-black leading-tight leading-tight tracking-tight">
+          Make smarter buying decisions with QuantAI          <br />
           <span className="bg-gradient-to-r from-cyan-300 via-violet-300 to-emerald-300 bg-clip-text text-transparent">
             to buy anything.
           </span>
         </h2>
 
-        <p className="text-white/60 max-w-2xl mx-auto mt-5">
-          Smart Buy AI searches live product results, compares price, rating, and store quality,
+        <p className="text-white/70 leading-relaxed max-w-2xl mx-auto mt-5">
+          QuantAI searches live product results, compares price, rating, and store quality,
           then gives you a clear buying decision.
         </p>
 
@@ -201,10 +199,9 @@ export default function Home() {
 
             <button
               onClick={search}
-              className="px-8 py-4 rounded-2xl font-black bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-600"
+              className="px-8 py-4 rounded-2xl font-black bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-600 shadow-[0_0_25px_rgba(139,92,246,0.6)] hover:shadow-[0_0_45px_rgba(139,92,246,0.9)] transition-all duration-300"
             >
-              Analyze
-            </button>
+              Analyze with AI            </button>
           </div>
 
           <div className="grid grid-cols-3 gap-3 mt-4 text-xs text-white/60">
@@ -250,7 +247,7 @@ export default function Home() {
       {best && !loading && (
         <>
           <section className="max-w-6xl mx-auto px-6 mt-12">
-            <div className="relative overflow-hidden rounded-[34px] border border-emerald-300/25 bg-emerald-400/10 backdrop-blur-2xl p-6 shadow-2xl">
+            <div className="relative overflow-hidden rounded-[34px] border border-cyan-300/30 bg-gradient-to-br from-cyan-400/15 via-emerald-400/10 to-violet-400/15 shadow-[0_0_45px_rgba(34,211,238,0.18)] backdrop-blur-2xl p-6 shadow-2xl relative overflow-hidden">
               <p className="text-emerald-300 font-black text-sm mb-4">🏆 BEST AI PICK</p>
 
               <div className="grid md:grid-cols-[180px_1fr_170px] gap-6 items-center">
@@ -302,8 +299,8 @@ export default function Home() {
           </section>
 
           <section className="max-w-6xl mx-auto px-6 mt-6">
-            <div className="rounded-3xl bg-white/10 border border-white/10 p-6 backdrop-blur-xl">
-              <h3 className="text-xl font-black mb-3">🧠 Smart Buy AI Decision</h3>
+            <div className="rounded-3xl bg-white/10 border border-white/10 p-6 backdrop-blur-xl hover:scale-105 hover:shadow-2xl transition-all duration-300">
+              <h3 className="text-xl font-extrabold tracking-tight mb-3">🧠 QuantAI Decision</h3>
 
               <p className="text-white/70 text-sm leading-relaxed">
                 {smartDecisionText(best)}
@@ -351,7 +348,7 @@ export default function Home() {
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-white/65">
-                <div className="rounded-xl bg-white/5 border border-white/10 p-2">Rating: {p.rating}</div>
+                <div className="rounded-xl bg-white/5 border border-white/10 p-2 hover:scale-105 hover:shadow-2xl transition-all duration-300">Rating: {p.rating}</div>
                 <div className="rounded-xl bg-white/5 border border-white/10 p-2">AI: {score}/100</div>
               </div>
 
@@ -384,7 +381,7 @@ export default function Home() {
         <div className="rounded-3xl bg-white/10 border border-white/10 p-6">
           <h3 className="font-black text-xl">Why AI scoring matters</h3>
           <p className="text-white/55 mt-2 text-sm">
-            The cheapest product is not always the best. Smart Buy AI balances price,
+            The cheapest product is not always the best. QuantAI balances price,
             rating, and store trust to reduce bad purchases.
           </p>
         </div>
