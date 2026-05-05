@@ -7,7 +7,6 @@ type Product = {
   title: string;
   store: string;
   price: number;
-  displayPrice?: string;
   rating: number | string;
   link: string;
   image: string;
@@ -17,6 +16,9 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
+  const [sort, setSort] = useState("best");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [saved, setSaved] = useState<Product[]>([]);
 
   function ratingValue(rating: number | string) {
     const n = Number(rating);
@@ -36,13 +38,21 @@ export default function Home() {
     else if (rating >= 4) score += 10;
 
     const store = p.store.toLowerCase();
-    if (store.includes("amazon") || store.includes("bol") || store.includes("coolblue") || store.includes("mediamarkt")) score += 12;
+    if (
+      store.includes("amazon") ||
+      store.includes("bol") ||
+      store.includes("coolblue") ||
+      store.includes("mediamarkt") ||
+      store.includes("apple")
+    ) {
+      score += 12;
+    }
 
     return Math.min(100, Math.round(score));
   }
 
   function decision(score: number) {
-    if (score >= 85) return "Best deal";
+    if (score >= 85) return "Buy now";
     if (score >= 70) return "Good choice";
     if (score >= 55) return "Compare first";
     return "Risky";
@@ -55,9 +65,37 @@ export default function Home() {
     return "text-red-300 border-red-300/30 bg-red-400/10";
   }
 
+  function whyImportant(p: Product) {
+    const score = getScore(p);
+    if (score >= 85) {
+      return "This offer has a strong balance of price, rating, and store reliability.";
+    }
+    if (score >= 70) {
+      return "This looks good, but Smart Buy AI recommends comparing it with cheaper options first.";
+    }
+    if (score >= 55) {
+      return "This product may be acceptable, but the price or rating is not strong enough yet.";
+    }
+    return "This option looks weak compared with other results. Better to avoid or wait.";
+  }
+
   const sortedProducts = useMemo(() => {
-    return [...products].sort((a, b) => getScore(b) - getScore(a));
-  }, [products]);
+    let list = [...products];
+
+    if (maxPrice) {
+      list = list.filter((p) => p.price <= Number(maxPrice));
+    }
+
+    if (sort === "cheap") {
+      list.sort((a, b) => a.price - b.price);
+    } else if (sort === "rating") {
+      list.sort((a, b) => ratingValue(b.rating) - ratingValue(a.rating));
+    } else {
+      list.sort((a, b) => getScore(b) - getScore(a));
+    }
+
+    return list;
+  }, [products, sort, maxPrice]);
 
   const best = sortedProducts[0];
 
@@ -71,8 +109,11 @@ export default function Home() {
       const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
       const data = await res.json();
 
-      if (data.products) setProducts(data.products);
-      else alert(data.error || "No products found");
+      if (data.products) {
+        setProducts(data.products);
+      } else {
+        alert(data.error || "No products found");
+      }
     } catch (e) {
       alert("Search failed");
       console.error(e);
@@ -81,17 +122,22 @@ export default function Home() {
     setLoading(false);
   }
 
+  function saveProduct(product: Product) {
+    if (!saved.some((p) => p.link === product.link)) {
+      setSaved([...saved, product]);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-[#050713] text-white relative overflow-hidden">
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_10%,rgba(34,211,238,0.35),transparent_28%),radial-gradient(circle_at_78%_20%,rgba(168,85,247,0.28),transparent_26%),radial-gradient(circle_at_50%_90%,rgba(16,185,129,0.18),transparent_35%),linear-gradient(135deg,#050713,#0b1020,#111827)]" />
         <div className="absolute inset-0 opacity-20 bg-[linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:56px_56px]" />
-        <div className="absolute top-24 left-1/2 -translate-x-1/2 w-[900px] h-[360px] bg-cyan-400/10 blur-3xl rounded-full" />
       </div>
 
       <nav className="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
         <div>
-          <h1 className="text-xl font-black tracking-tight">Smart Buy AI</h1>
+          <h1 className="text-xl font-black">Smart Buy AI</h1>
           <p className="text-xs text-white/45">AI shopping intelligence engine</p>
         </div>
 
@@ -104,7 +150,7 @@ export default function Home() {
       </nav>
 
       <section className="max-w-6xl mx-auto px-6 pt-14 text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/15 backdrop-blur-xl text-sm text-white/80 mb-6">
+        <div className="inline-flex px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm mb-6">
           ✦ Real-time AI shopping advisor
         </div>
 
@@ -117,7 +163,8 @@ export default function Home() {
         </h2>
 
         <p className="text-white/60 max-w-2xl mx-auto mt-5">
-          Search real products, compare live prices, and let Smart Buy AI score the best buying option.
+          Smart Buy AI searches live product results, compares price, rating, and store quality,
+          then gives you a clear buying decision.
         </p>
 
         <div className="max-w-4xl mx-auto mt-10 p-4 rounded-[32px] bg-white/10 border border-white/15 backdrop-blur-2xl shadow-2xl">
@@ -132,7 +179,7 @@ export default function Home() {
 
             <button
               onClick={search}
-              className="px-8 py-4 rounded-2xl font-black bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-600 shadow-lg"
+              className="px-8 py-4 rounded-2xl font-black bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-600"
             >
               Analyze
             </button>
@@ -152,14 +199,38 @@ export default function Home() {
         )}
       </section>
 
+      {products.length > 0 && (
+        <section className="max-w-6xl mx-auto px-6 mt-8 grid md:grid-cols-3 gap-4">
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            className="bg-white/10 border border-white/20 px-4 py-3 rounded-2xl text-sm"
+          >
+            <option value="best">Best AI Score</option>
+            <option value="cheap">Cheapest price</option>
+            <option value="rating">Highest rating</option>
+          </select>
+
+          <input
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+            type="number"
+            placeholder="Max price (€)"
+            className="bg-white/10 border border-white/20 px-4 py-3 rounded-2xl text-sm"
+          />
+
+          <div className="bg-white/10 border border-white/20 px-4 py-3 rounded-2xl text-sm">
+            Saved products: {saved.length}
+          </div>
+        </section>
+      )}
+
       {best && !loading && (
         <section className="max-w-6xl mx-auto px-6 mt-12">
           <div className="relative overflow-hidden rounded-[34px] border border-emerald-300/25 bg-emerald-400/10 backdrop-blur-2xl p-6 shadow-2xl">
-            <div className="absolute right-0 top-0 w-80 h-80 bg-emerald-400/20 blur-3xl rounded-full" />
+            <p className="text-emerald-300 font-black text-sm mb-4">🏆 BEST AI PICK</p>
 
-            <p className="relative text-emerald-300 font-black text-sm mb-4">🏆 BEST AI PICK</p>
-
-            <div className="relative grid md:grid-cols-[180px_1fr_170px] gap-6 items-center">
+            <div className="grid md:grid-cols-[180px_1fr_170px] gap-6 items-center">
               {best.image && (
                 <img
                   src={best.image}
@@ -172,9 +243,31 @@ export default function Home() {
                 <h3 className="text-2xl md:text-3xl font-black">{best.title}</h3>
                 <p className="text-white/60 mt-1">{best.store}</p>
                 <p className="text-5xl font-black text-emerald-300 mt-4">€{best.price}</p>
+
                 <p className={`inline-flex mt-3 px-3 py-1 rounded-full border text-sm font-black ${decisionStyle(getScore(best))}`}>
                   {decision(getScore(best))}
                 </p>
+
+                <p className="text-white/70 mt-4 text-sm">
+                  {whyImportant(best)}
+                </p>
+
+                <div className="flex gap-3 mt-5">
+                  <a
+                    href={best.link}
+                    target="_blank"
+                    className="bg-white text-black px-5 py-3 rounded-2xl font-black"
+                  >
+                    View Offer
+                  </a>
+
+                  <button
+                    onClick={() => saveProduct(best)}
+                    className="bg-emerald-400 text-black px-5 py-3 rounded-2xl font-black"
+                  >
+                    Save
+                  </button>
+                </div>
               </div>
 
               <div className="rounded-3xl bg-black/30 border border-white/10 p-5 text-center">
@@ -193,7 +286,7 @@ export default function Home() {
           return (
             <div
               key={p.id}
-              className="group rounded-[28px] bg-white/10 border border-white/10 backdrop-blur-xl p-5 hover:bg-white/15 hover:scale-[1.015] transition"
+              className="rounded-[28px] bg-white/10 border border-white/10 backdrop-blur-xl p-5 hover:bg-white/15 hover:scale-[1.015] transition"
             >
               {p.image && (
                 <div className="bg-white rounded-2xl p-3 mb-4">
@@ -216,13 +309,26 @@ export default function Home() {
                 <div className="rounded-xl bg-white/5 border border-white/10 p-2">AI: {score}/100</div>
               </div>
 
-              <a
-                href={p.link}
-                target="_blank"
-                className="block mt-5 bg-white text-black text-center py-3 rounded-2xl font-black"
-              >
-                View Offer
-              </a>
+              <p className="text-white/60 text-sm mt-4">
+                {whyImportant(p)}
+              </p>
+
+              <div className="flex gap-2 mt-5">
+                <a
+                  href={p.link}
+                  target="_blank"
+                  className="flex-1 bg-white text-black text-center py-3 rounded-2xl font-black"
+                >
+                  View Offer
+                </a>
+
+                <button
+                  onClick={() => saveProduct(p)}
+                  className="bg-cyan-400 text-black px-4 rounded-2xl font-black"
+                >
+                  Save
+                </button>
+              </div>
             </div>
           );
         })}
@@ -230,18 +336,26 @@ export default function Home() {
 
       <section className="max-w-6xl mx-auto px-6 mt-20 pb-16 grid md:grid-cols-3 gap-5">
         <div className="rounded-3xl bg-white/10 border border-white/10 p-6">
-          <h3 className="font-black text-xl">Smart Alerts</h3>
-          <p className="text-white/55 mt-2 text-sm">Get notified when a product becomes a strong buy.</p>
+          <h3 className="font-black text-xl">Why AI scoring matters</h3>
+          <p className="text-white/55 mt-2 text-sm">
+            The cheapest product is not always the best. Smart Buy AI balances price,
+            rating, and store trust to reduce bad purchases.
+          </p>
         </div>
 
         <div className="rounded-3xl bg-white/10 border border-white/10 p-6">
-          <h3 className="font-black text-xl">Price Intelligence</h3>
-          <p className="text-white/55 mt-2 text-sm">Understand whether the current price is good or overpriced.</p>
+          <h3 className="font-black text-xl">Smart Alerts</h3>
+          <p className="text-white/55 mt-2 text-sm">
+            Soon, users will be able to save products and get notified when the price
+            becomes a strong buy.
+          </p>
         </div>
 
         <div className="rounded-3xl bg-white/10 border border-white/10 p-6">
           <h3 className="font-black text-xl">AI Assistant</h3>
-          <p className="text-white/55 mt-2 text-sm">Ask what to buy, when to buy, and which option is safer.</p>
+          <p className="text-white/55 mt-2 text-sm">
+            The next version will let users ask: should I buy now, wait, or choose a safer option?
+          </p>
         </div>
       </section>
     </main>
