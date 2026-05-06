@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-
+import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 type Product = {
   id: number;
   title: string;
@@ -13,6 +13,7 @@ type Product = {
 };
 
 export default function Home() {
+  const { isSignedIn } = useUser();
   const [query, setQuery] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
@@ -182,9 +183,16 @@ const [aiReply, setAiReply] = useState("")
     Pro Tools
   </span>
 
-  <button className="px-4 py-2 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition">
-    Login
-  </button>
+  
+  {isSignedIn ? (
+  <UserButton />
+) : (
+  <SignInButton mode="modal">
+    <button className="px-4 py-2 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition">
+      Login
+    </button>
+  </SignInButton>
+)}
 
   <button className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-400 to-purple-500 text-white font-bold hover:scale-105 transition-all duration-300 shadow-lg shadow-cyan-500/30">
     Get Started
