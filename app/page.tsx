@@ -248,7 +248,7 @@ export default function Home() {
       </section>
 
       {products.length > 0 && (
-        <section className="max-w-6xl mx-auto px-6 mt-8 grid md:grid-cols-3 gap-4">
+        <section className="max-w-6xl mx-auto px-6 mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}
@@ -269,7 +269,59 @@ export default function Home() {
 
           <div className="bg-white/10 border border-white/20 px-4 py-3 rounded-2xl text-sm">
             Saved products: {saved.length}
-          </div>
+          </div> 
+          {saved.length > 0 && (
+  <section className="max-w-6xl mx-auto px-6 mt-8">
+    <div className="rounded-3xl bg-white/10 border border-cyan-400/20 backdrop-blur-xl p-5">
+      <h3 className="text-xl font-extrabold tracking-tight mb-4">
+    
+       💾 Saved Products
+      </h3>
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        
+          {saved.map((item) => (
+  <div
+    key={item.link}
+    className="rounded-3xl bg-black/20 border border-cyan-400/20 backdrop-blur-xl p-5 hover:scale-[1.02] transition-all duration-300"
+  >
+    <div className="flex gap-4 items-center">
+      {item.image && (
+        <img
+          src={item.image}
+          alt={item.title}
+          className="w-20 h-20 object-contain bg-white rounded-2xl p-2"
+        />
+      )}
+
+      <div className="flex-1">
+        <p className="font-bold line-clamp-2">{item.title}</p>
+        <p className="text-emerald-300 font-black mt-1">€{item.price}</p>
+        <p className="text-white/50 text-sm">{item.store}</p>
+      </div>
+
+      <a
+        href={item.link}
+        target="_blank"
+        className="bg-white text-black px-4 py-2 rounded-xl font-bold"
+      >
+        View
+      </a>
+      <button
+  onClick={() => {
+    setSaved(saved.filter((p) => p.link !== item.link))
+  }}
+  className="bg-red-500 text-white px-4 py-2 rounded-xl font-bold mt-2"
+>
+  Remove
+</button>
+    </div>
+  </div>
+))}
+      </div>
+    </div>
+  </section>
+)}
         </section>
       )}
 
@@ -309,6 +361,7 @@ export default function Home() {
                     >
                       View Offer
                     </a>
+                    
 
                     <button
                       onClick={() => saveProduct(best)}
@@ -358,11 +411,11 @@ export default function Home() {
           return (
             <div
   key={p.id}
-  className="rounded-[28px] bg-white/5 border border-white/10 backdrop-blur-xl p-5 hover:-translate-y-2 hover:scale-[1.02] hover:border-cyan-400/40 hover:shadow-[0_0_40px_rgba(34,211,238,0.25)] transition-all duration-500 animate-[fadeIn_0.6s_ease]"
+  className="group rounded-[28px] bg-white/5 border border-white/10 backdrop-blur-xl p-5 hover:-translate-y-2 hover:scale-[1.02] hover:border-cyan-400/40 hover:shadow-[0_0_40px_rgba(34,211,238,0.25)] transition-all duration-500 animate-[fadeIn_0.6s_ease]"
 >
               {p.image && (
                 <div className="bg-white rounded-2xl p-3 mb-4">
-                  <img src={p.image} alt={p.title} className="w-full h-40 object-contain" />
+                  <img src={p.image} alt={p.title} className="w-full h-40 object-contain transition-transform duration-500 group-hover:scale-110" />
                 </div>
               )}
 
@@ -413,7 +466,7 @@ export default function Home() {
 
                 <button
                   onClick={() => saveProduct(p)}
-                  className="bg-cyan-400 text-black px-4 rounded-2xl font-black"
+                  className="bg-cyan-400/90 text-black px-4 rounded-2xl font-black hover:bg-cyan-300 hover:scale-105 transition-all duration-300 shadow-[0_0_18px_rgba(34,211,238,0.35)]"
                 >
                   Save
                 </button>
