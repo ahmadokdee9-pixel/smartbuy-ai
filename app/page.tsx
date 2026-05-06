@@ -19,6 +19,8 @@ export default function Home() {
   const [sort, setSort] = useState("best");
   const [maxPrice, setMaxPrice] = useState("");
   const [saved, setSaved] = useState<Product[]>([]);
+  const [question, setQuestion] = useState("")
+const [aiReply, setAiReply] = useState("")
 
   function ratingValue(rating: number | string) {
     const n = Number(rating);
@@ -401,6 +403,62 @@ export default function Home() {
               </div>
             </div>
           </section>
+          <section className="max-w-6xl mx-auto px-6 mt-8">
+  <div className="rounded-3xl bg-purple-400/10 border border-purple-400/20 backdrop-blur-xl p-6">
+    <h3 className="text-2xl font-extrabold mb-3">
+      🤖 AI Assistant
+    </h3>
+
+    <p className="text-white/70 leading-relaxed">
+      Ask QuantAI what to do next: compare similar products, wait for a better price,
+      check store trust, or find a cheaper alternative.
+    </p>
+
+    <div className="grid md:grid-cols-3 gap-4 mt-5">
+      <button className="bg-white/10 border border-white/10 rounded-2xl py-3 font-bold hover:bg-white/20 transition">
+        Compare alternatives
+      </button>
+
+      <button className="bg-white/10 border border-white/10 rounded-2xl py-3 font-bold hover:bg-white/20 transition">
+        Should I buy now?
+      </button>
+
+      <button className="bg-white/10 border border-white/10 rounded-2xl py-3 font-bold hover:bg-white/20 transition">
+        Track price drop
+      </button>
+    </div>
+  </div>
+  
+
+<div className="mt-5 flex gap-3">
+  <input
+    placeholder="Ask QuantAI anything..."
+    value={question}
+onChange={(e) => setQuestion(e.target.value)}
+    className="flex-1 bg-black/20 border border-white/10 rounded-2xl px-4 py-3 outline-none"
+  />
+
+  <button
+  onClick={() => {
+    if (question.toLowerCase().includes("cheap")) {
+      setAiReply("QuantAI found cheaper alternatives with similar ratings.")
+    } else if (question.toLowerCase().includes("buy")) {
+      setAiReply("QuantAI recommends buying this product now based on price, rating, and store trust.")
+    } else {
+      setAiReply("QuantAI is analyzing your request. Try asking about price, quality, or alternatives.")
+    }
+  }}
+  className="bg-cyan-400 text-black px-6 rounded-2xl font-black"
+>
+    Ask AI
+  </button>
+</div>
+{aiReply && (
+  <div className="mt-4 bg-cyan-400/10 border border-cyan-400/20 rounded-2xl p-4 text-sm text-cyan-100">
+    {aiReply}
+  </div>
+)}
+</section>
         </>
       )}
 
