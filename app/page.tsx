@@ -198,7 +198,7 @@ const [aiReply, setAiReply] = useState("")
           ✦ Real-time AI shopping advisor
         </div>
 
-        <h2 className="text-5xl md:text-7xl font-black leading-tight leading-tight tracking-tight">
+        <h2 className="text-5xl md:text-7xl font-black leading-tight leading-tight tracking-tight bg-gradient-to-r from-cyan-300 via-white to-purple-400 bg-clip-text text-transparent">
           Make smarter buying decisions with QuantAI          <br />
           <span className="bg-gradient-to-r from-cyan-300 via-violet-300 to-emerald-300 bg-clip-text text-transparent">
             to buy anything.
@@ -231,6 +231,19 @@ const [aiReply, setAiReply] = useState("")
             <div className="rounded-2xl bg-white/5 border border-white/10 p-3">Live prices</div>
             <div className="rounded-2xl bg-white/5 border border-white/10 p-3">AI score</div>
             <div className="rounded-2xl bg-white/5 border border-white/10 p-3">Best decision</div>
+            <div className="mt-5 grid grid-cols-3 gap-3 text-xs text-white/70">
+  <div className="rounded-2xl bg-white/10 border border-white/10 px-4 py-3 hover:bg-white/10 hover:scale-105 transition-all duration-300">
+    🔒 Secure product research
+  </div>
+
+  <div className="rounded-2xl bg-white/10 border border-white/10 px-4 py-3 hover:bg-white/10 hover:scale-105 transition-all duration-300">
+    ⚡ Real-time decision engine
+  </div>
+
+  <div className="rounded-2xl bg-white/10 border border-white/10 px-4 py-3 hover:bg-white/10 hover:scale-105 transition-all duration-300">
+    🧠 AI-powered buying logic
+  </div>
+</div>
           </div>
         </div>
 
@@ -415,17 +428,38 @@ const [aiReply, setAiReply] = useState("")
     </p>
 
     <div className="grid md:grid-cols-3 gap-4 mt-5">
-      <button className="bg-white/10 border border-white/10 rounded-2xl py-3 font-bold hover:bg-white/20 transition">
-        Compare alternatives
-      </button>
+      <button
+  onClick={() =>
+    setAiReply(
+      "QuantAI found cheaper alternatives with similar ratings. Compare price, store trust, and delivery before buying."
+    )
+  }
+  className="bg-white/10 border border-white/10 rounded-2xl py-3 font-bold hover:bg-white/20 transition"
+>
+  Compare alternatives
+</button>
 
-      <button className="bg-white/10 border border-white/10 rounded-2xl py-3 font-bold hover:bg-white/20 transition">
-        Should I buy now?
-      </button>
+      <button
+  onClick={() =>
+    setAiReply(
+      "QuantAI recommends buying this product now. Price, rating, and trust score are currently strong."
+    )
+  }
+  className="bg-white/10 border border-white/10 rounded-2xl py-3 font-bold hover:bg-white/20 transition"
+>
+  Should I buy now?
+</button>
 
-      <button className="bg-white/10 border border-white/10 rounded-2xl py-3 font-bold hover:bg-white/20 transition">
-        Track price drop
-      </button>
+      <button
+  onClick={() =>
+    setAiReply(
+      "QuantAI will track this product and notify you when the price becomes a stronger deal."
+    )
+  }
+  className="bg-white/10 border border-white/10 rounded-2xl py-3 font-bold hover:bg-white/20 transition"
+>
+  Track price drop
+</button>
     </div>
   </div>
   
